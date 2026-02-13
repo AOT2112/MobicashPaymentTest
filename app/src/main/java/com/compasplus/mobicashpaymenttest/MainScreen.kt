@@ -1,17 +1,23 @@
 package com.compasplus.mobicashpaymenttest
 
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,7 +26,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults.buttonColors
@@ -29,14 +38,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.HorizontalAlignmentLine
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,20 +78,51 @@ class MainActivity : ComponentActivity() {
         val data = jsonLoader.getFaqData()
         enableEdgeToEdge()
         setContent {
-            MobicashPaymentTestTheme {
-//                val data = remember { mutableStateOf(jsonLoader.getFaqData()) }
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    FaqPayload(data, Modifier.padding(innerPadding))
-                }
-            }
+            ScreenContent(data)
+//            CompositionLocalProvider(localContext provides this) {
+//
+//            }
         }
     }
 }
+
+//val localContext = staticCompositionLocalOf<Context?> { null }
+
 @Composable
-fun FaqPayload(groups: Map<String?, List<JsonLoader.FaqDataItem>>, modifier: Modifier = Modifier)
-{
+fun ScreenContent(/*context : Context?, */data : Map<String?, List<JsonLoader.FaqDataItem>>) {
+    MobicashPaymentTestTheme {
+//                val data = remember { mutableStateOf(jsonLoader.getFaqData()) }
+        //val context = localContext.current
+        //if (context != null) {
+            Column(
+                Modifier.fillMaxSize()
+            ) {
+                @OptIn(ExperimentalMaterial3Api::class)
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(R.string.faq_title),
+                            color = MaterialTheme.colorScheme.tertiary,
+                            fontSize = 15.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                )
+                FaqPayload(data, Modifier.padding(top = 40.dp))
+            }
+        //}
+//                Scaffold(
+//                    modifier = Modifier.fillMaxSize()) { innerPadding ->
+//                    FaqPayload(data, Modifier.padding(innerPadding))
+//                }
+    }
+}
+
+@Composable
+fun FaqPayload(groups: Map<String?, List<JsonLoader.FaqDataItem>>, modifier: Modifier = Modifier) {
     val payloadModifier = Modifier.fillMaxWidth()
         .padding(horizontal = 5.dp)
+        .verticalScroll(ScrollState(0))
     Column(
         modifier = payloadModifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -95,9 +149,10 @@ fun FaqGroup(groupNameText : String?, items : List<JsonLoader.FaqDataItem>) {
                 .fillMaxWidth()
             Text(
                 groupNameText.uppercase(),
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = groupNameModifier,
-                fontSize = 13.sp
+                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                fontWeight = FontWeight.Bold
                 )
         }
         FaqBlock(items)
@@ -109,7 +164,7 @@ fun FaqBlock(items : List<JsonLoader.FaqDataItem>) {
     //val color = MaterialTheme.colorScheme.onBackground
     Surface(
         shape = RoundedCornerShape(5.dp),
-        contentColor = MaterialTheme.colorScheme.onBackground,
+        contentColor = MaterialTheme.colorScheme.onSurface,
         shadowElevation = 5.dp,
     ) {
         Column(modifier = Modifier.fillMaxWidth()
@@ -119,7 +174,7 @@ fun FaqBlock(items : List<JsonLoader.FaqDataItem>) {
             for (item in items) {
                 FaqButton(item.Question)
                 if (item != items.last()) {
-                    Box(modifier = Modifier.background(Color(0xffe6e6e6))
+                    Box(modifier = Modifier.background(MaterialTheme.colorScheme.primary)
                         .height(1.dp)
                         .fillMaxWidth())
                 }
@@ -140,10 +195,10 @@ fun FaqButton(text: String) {
 //    )
 
     val buttonColors : ButtonColors = ButtonColors(
-        MaterialTheme.colorScheme.background,
-        MaterialTheme.colorScheme.onBackground,
-        MaterialTheme.colorScheme.background,
-        MaterialTheme.colorScheme.onBackground
+        MaterialTheme.colorScheme.surface,
+        MaterialTheme.colorScheme.onSurface,
+        MaterialTheme.colorScheme.surface,
+        MaterialTheme.colorScheme.onSurface
     )
 
 //    val buttonColors : ButtonColors = ButtonColors(
@@ -179,23 +234,41 @@ fun FaqButton(text: String) {
             //.aspectRatio(1f),
             shape = RectangleShape,
             colors = buttonColors,
-            contentPadding = PaddingValues(5.dp)
+            contentPadding = PaddingValues(horizontal = 7.dp, vertical = 5.dp)
+            //contentPadding = PaddingValues(5.dp)
     ) {
-        Text(
-            text,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 1.dp),
-            fontSize = 13.sp,
-            textAlign = TextAlign.Left
-        )
-        //Icon()
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text,
+                modifier = Modifier.weight(15f),//.padding(horizontal = 2.dp),
+                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                textAlign = TextAlign.Left
+            )
+            Box(
+                modifier = Modifier.weight(1f).fillMaxHeight(),//.requiredWidth(6.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                    modifier = Modifier//.weight(1f)
+                        .padding(/*horizontal = 2.dp,*/ vertical = 5.dp)
+                        .fillMaxHeight()
+                        .clipToBounds(),
+                    contentDescription = "ArrowRight",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
     }
 }
 
 @Preview(showBackground = true/*, uiMode = Configuration.UI_MODE_NIGHT_YES*/)
 @Composable
 fun ScreenPreview() {
-    MobicashPaymentTestTheme {
-        val testData = PreviewTestData().prepareTestData()
-        FaqPayload(testData)
-    }
+    val testData = PreviewTestData().prepareTestData()
+    ScreenContent(testData)
 }
