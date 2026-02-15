@@ -1,4 +1,6 @@
-package com.compasplus.mobicashpaymenttest
+package com.compasplus.mobicashpaymenttest.data
+
+import com.compasplus.mobicashpaymenttest.JsonLoader
 
 internal class PreviewTestData {
     fun prepareTestData() : Map<String?, List<JsonLoader.FaqDataItem>> {
