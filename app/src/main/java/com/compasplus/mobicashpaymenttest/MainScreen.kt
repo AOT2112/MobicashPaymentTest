@@ -56,6 +56,7 @@ import com.compasplus.mobicashpaymenttest.ui.components.CornerShape
 //import com.compasplus.mobicashpaymenttest.ui.components.SearchBar
 import com.compasplus.mobicashpaymenttest.ui.components.SecondaryScreen
 import com.compasplus.mobicashpaymenttest.ui.components.ShadowElevation
+import com.compasplus.mobicashpaymenttest.ui.components.SimpleSearchBar
 
 //import com.compasplus.mobicashpaymenttest.ui.theme.White70
 //import com.compasplus.mobicashpaymenttest.ui.theme.colorSchemeLocal
@@ -84,120 +85,10 @@ class MainActivity : ComponentActivity() {
 fun ScreenContent(data : Map<String?, List<JsonLoader.FaqDataItem>>) {
     val modifier = Modifier.padding(horizontal = 10.dp)
     SecondaryScreen(stringResource(R.string.faq_title)) {
-        @OptIn(ExperimentalMaterial3Api::class)
-        val searchState = rememberSearchBarState()
-        var query by remember { mutableStateOf<String?>(null) }
-        @OptIn(ExperimentalMaterial3Api::class)
-        SearchBar(
-            state = searchState,
-            inputField = {
-                val iconsColor = MaterialTheme.colorScheme.onSurface
-                val textFieldColors = TextFieldDefaults.colors(
-                    focusedLeadingIconColor = iconsColor,
-                    unfocusedLeadingIconColor = iconsColor,
-                    disabledLeadingIconColor = iconsColor,
-                    errorLeadingIconColor = iconsColor,
-
-                    focusedTrailingIconColor = iconsColor,
-                    unfocusedTrailingIconColor = iconsColor,
-                    disabledTrailingIconColor = iconsColor,
-                    errorTrailingIconColor = iconsColor
-                )
-                SearchBarDefaults.InputField(
-                    query = query ?: "",
-                    onQueryChange = { query = it },
-                    onSearch = { },
-                    expanded = false,
-                    onExpandedChange = { },
-                    placeholder = {
-                        Text(stringResource(R.string.search))
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            //tint = iconsColor
-                        )
-                    },
-                    trailingIcon = {
-                        if (query.isNullOrEmpty()) {
-                            IconButton(
-                                onClick = { }
-                            ) {
-                                Icon(
-                                    Icons.Outlined.Check,
-                                    contentDescription = "Voice"
-                                )
-                            }
-                        }
-                        else {
-                            IconButton(
-                                onClick = { query = null }
-                            ) {
-                                Icon(
-                                    Icons.Outlined.Close,
-                                    contentDescription = "Close"
-                                )
-                            }
-                        }
-                    }
-                )
-            },
-            modifier = modifier.height(70.dp)
-                .padding(vertical = 10.dp)
-                .fillMaxWidth(),
-            shape = CornerShape,
-            //colors = SearchBarColors(MaterialTheme.colorScheme.surface, ),
-            shadowElevation = ShadowElevation
-        )
-//        SearchBar(
-//            onTextType = { },
-//            modifier.padding(vertical = 10.dp)
-//        )
+        SimpleSearchBar(modifier.padding(vertical = 10.dp))
         FaqPayload(data, modifier.padding(top = 5.dp))
     }
 }
-
-//@Composable
-//fun ScreenLayout(data : Map<String?, List<JsonLoader.FaqDataItem>>) {
-//    MobicashPaymentTestTheme {
-//        val activity = LocalActivity.current
-//        Column(
-//            Modifier.fillMaxSize()
-//                .background(MaterialTheme.colorScheme.background)
-//                .windowInsetsPadding(WindowInsets.safeDrawing)
-//        ) {
-//            @OptIn(ExperimentalMaterial3Api::class)
-//            CenterAlignedTopAppBar(
-//                title = {
-//                    Text(
-//                        text = stringResource(R.string.faq_title),
-//                        color = MaterialTheme.colorScheme.tertiary,
-//                        fontSize = 17.sp,
-//                        textAlign = TextAlign.Center
-//                    )
-//                },
-//                navigationIcon = {
-//                    IconButton(
-//                        onClick = { activity?.finish() }
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-//                            contentDescription = "ArrowBack",
-//                            tint = MaterialTheme.colorScheme.tertiary
-//                        )
-//                    }
-//                }
-//            )
-//            FaqPayload(data, Modifier.padding(top = 70.dp))
-//        }
-//        //}
-////                Scaffold(
-////                    modifier = Modifier.fillMaxSize()) { innerPadding ->
-////                    FaqPayload(data, Modifier.padding(innerPadding))
-////                }
-//    }
-//}
 
 @Composable
 fun FaqPayload(groups: Map<String?, List<JsonLoader.FaqDataItem>>, modifier: Modifier = Modifier) {
@@ -322,7 +213,7 @@ fun FaqButton(text: String) {
             //.aspectRatio(1f),
             shape = RectangleShape,
             colors = buttonColors,
-            contentPadding = PaddingValues(horizontal = 7.dp/*, vertical = 10.dp*/)
+            contentPadding = PaddingValues(horizontal = 7.dp, vertical = 10.dp)
             //contentPadding = PaddingValues(5.dp)
     ) {
         Row(
@@ -332,7 +223,7 @@ fun FaqButton(text: String) {
         ) {
             Text(
                 text,
-                modifier = Modifier.weight(15f).padding(vertical = 7.dp),//.padding(horizontal = 2.dp),
+                modifier = Modifier.weight(15f),//.padding(vertical = 7.dp),//.padding(horizontal = 2.dp),
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                 textAlign = TextAlign.Left
             )
