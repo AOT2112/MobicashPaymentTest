@@ -30,20 +30,19 @@ val DarkColorScheme = darkColorScheme(
 )
 
 val LightColorScheme = lightColorScheme(
-    primary = Color(0xFFE6E6E6),
-    secondary = Color(0xFFE6E6E6),
+    primary = Color(0xFF7F7F7F),
+    secondary = Color(0xFF7F7F7F),
     tertiary = Color(0xFFBE1E24),
 
-    // Other default colors to override
-//    background = Color(0xFFFFFBFE),
-//    surface = Color(0xFFFFFBFE),
-    background = Color(0xFFBEBEBE), // 0xFFEFEFEF
-    surface = Color.White, // 0xFFEFEFEF
-    onPrimary = Color(0xFFBEBEBE),
+    background = Color(0xFFEFEFEF),
+    surface = Color.White,
+    surfaceTint = Color(0xFFD6D6D6),
+    surfaceVariant = Color(0xFF999999),
+    onPrimary = Color(0xFFEFEFEF),
     onSecondary = Color.White,
     onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
+    onBackground = Color.Black,
+    onSurface = Color.Black,
 
 )
 

@@ -29,8 +29,14 @@ import com.compasplus.mobicashpaymenttest.R
 
 @Composable
 fun SimpleSearchBar(modifier : Modifier = Modifier) {
-    val iconsColor = MaterialTheme.colorScheme.onSurface
+    val containerColor = MaterialTheme.colorScheme.surface
+    val iconsColor = MaterialTheme.colorScheme.surfaceTint
     val textFieldColors = TextFieldDefaults.colors(
+        focusedContainerColor = containerColor,
+        unfocusedContainerColor = containerColor,
+        disabledContainerColor = containerColor,
+        errorContainerColor = containerColor,
+        
         focusedLeadingIconColor = iconsColor,
         unfocusedLeadingIconColor = iconsColor,
         disabledLeadingIconColor = iconsColor,
@@ -56,7 +62,10 @@ fun SimpleSearchBar(modifier : Modifier = Modifier) {
                 expanded = false,
                 onExpandedChange = { },
                 placeholder = {
-                    Text(stringResource(R.string.search))
+                    Text(
+                        stringResource(R.string.search),
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                    )
                 },
                 leadingIcon = {
                     Icon(
@@ -86,15 +95,16 @@ fun SimpleSearchBar(modifier : Modifier = Modifier) {
                             )
                         }
                     }
-                }
+                },
+                colors = textFieldColors
             )
         },
-        modifier = modifier.height(70.dp)
+        modifier = modifier.height(50.dp)
             .fillMaxWidth(),
         shape = CornerShape,
         colors = SearchBarColors(
-            MaterialTheme.colorScheme.surface,
-            MaterialTheme.colorScheme.onSurface,
+            containerColor,
+            iconsColor,
             textFieldColors),
         shadowElevation = ShadowElevation
     )

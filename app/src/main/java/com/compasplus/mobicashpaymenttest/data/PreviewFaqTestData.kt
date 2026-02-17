@@ -2,7 +2,7 @@ package com.compasplus.mobicashpaymenttest.data
 
 import com.compasplus.mobicashpaymenttest.JsonLoader
 
-internal class PreviewTestData {
+internal class PreviewFaqTestData {
     fun prepareTestData() : Map<String?, List<JsonLoader.FaqDataItem>> {
         val data : List<JsonLoader.FaqDataItem> = listOf(
             JsonLoader.FaqDataItem(
@@ -96,12 +96,7 @@ internal class PreviewTestData {
                 "When you make a payment using Платежи Мобикеш, the bill is marked with a green Paid symbol beneath it.\\n\\nThe retailer / biller / business will immediately receive notification of your payment either in their own app or cash register, or will see your payment on the list of paid bills at the end of a billing period or upon receiving a copy of your payment order depending on the type of company they are and their chosen integration method."
             ),
 
-            JsonLoader.FaqDataItem(
-                "q3-5",
-                "How to pay",
-                "I have entered the wrong bill number and paid the wrong retailer /biller /business. What do I do?",
-                "We have a number of safe guards in place to make sure you do not pay the wrong retailer / biller / business when entering the bill by keyboard. However, should this occur we are unable to recall the payment as we are not your bank or the retailer / biller / business; we are facilitating the payment. You may wish to contact your bank to see what options are available to you. Be very careful when entering the bill number. We are not responsible if you make a payment to the wrong retailer / biller / business. Each time you make a payment with the Платежи Мобикеш service you are given the opportunity to review the bill details before you pay. To avoid manual bill entry mistakes, we suggest you use the QR Code or NFC payment options."
-            ),
+            longFaqDataItem,
 
             JsonLoader.FaqDataItem(
                 "q3-6",
@@ -178,4 +173,17 @@ internal class PreviewTestData {
         val readyData = data.groupBy(keySelector = { it.Subject })
         return readyData
     }
+
+
+    val oneItem : JsonLoader.FaqDataItem
+        get() {
+            return longFaqDataItem
+        }
+
+    private val longFaqDataItem = JsonLoader.FaqDataItem(
+        "q3-5",
+        "How to pay",
+        "I have entered the wrong bill number and paid the wrong retailer /biller /business. What do I do?",
+        "We have a number of safe guards in place to make sure you do not pay the wrong retailer / biller / business when entering the bill by keyboard. However, should this occur we are unable to recall the payment as we are not your bank or the retailer / biller / business; we are facilitating the payment. You may wish to contact your bank to see what options are available to you. Be very careful when entering the bill number. We are not responsible if you make a payment to the wrong retailer / biller / business. Each time you make a payment with the Платежи Мобикеш service you are given the opportunity to review the bill details before you pay. To avoid manual bill entry mistakes, we suggest you use the QR Code or NFC payment options."
+    )
 }

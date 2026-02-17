@@ -24,7 +24,7 @@ fun SecondaryScreen(
     modifier: Modifier = Modifier,
     content : @Composable (() -> Unit)
 ) {
-    MobicashPaymentTestTheme {
+    MobicashPaymentTestTheme(dynamicColor = false) {
         val activity = LocalActivity.current
         Column(
             modifier.fillMaxSize()
@@ -33,7 +33,7 @@ fun SecondaryScreen(
         ) {
             SimpleTopBar(
                 title,
-                onClickBackButton = { activity?.finish() }
+                onClickBackButton = { activity?.finishAffinity() }
             )
             content()
         }
