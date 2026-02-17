@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Платежи Мобикеш</string>
-    <string name="data_loading_error">Возникла ошибка при загрузке данных</string>
+    <string name="data_loading_error">An error occurred when loading data</string>
     <string name="faq_title">F.A.Q.</string>
-    <string name="search">Поиск</string>
-    <string name="title_activity_main">MainScreen</string>
+    <string name="search">Search</string>
 </resources>

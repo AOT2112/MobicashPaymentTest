@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -27,10 +28,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -74,7 +78,7 @@ class MainScreen : ComponentActivity() {
 fun ScreenContent(data : Map<String?, List<JsonLoader.FaqDataItem>>) {
     val modifier = Modifier.padding(horizontal = 10.dp)
     SecondaryScreen(stringResource(R.string.faq_title)) {
-        SimpleSearchBar(modifier.padding(vertical = 10.dp))
+        SimpleSearchBar(modifier.padding(vertical = 13.dp))
         FaqPayload(data, modifier/*.padding(top = 5.dp)*/)
     }
 }
@@ -83,7 +87,7 @@ fun ScreenContent(data : Map<String?, List<JsonLoader.FaqDataItem>>) {
 fun FaqPayload(groups: Map<String?, List<JsonLoader.FaqDataItem>>, modifier: Modifier = Modifier) {
     val payloadModifier = modifier.fillMaxWidth()
         //.padding(horizontal = 5.dp)
-        .verticalScroll(ScrollState(0))
+        //.verticalScroll(ScrollState(0))
 
 //    Column(
 //        modifier = payloadModifier,
@@ -106,6 +110,13 @@ fun FaqPayload(groups: Map<String?, List<JsonLoader.FaqDataItem>>, modifier: Mod
             item {
                 FaqGroup(group.key, group.value)
             }
+//            val groupNameText = group.key
+//            if (groupNameText != null) {
+//                item {
+//                    //GroupTitle(groupNameText, groupNameModifier)
+//                    //FaqGroup(group.key, group.value)
+//                }
+//            }
         }
     }
 }
@@ -117,14 +128,19 @@ fun FaqPayload(groups: Map<String?, List<JsonLoader.FaqDataItem>>, modifier: Mod
 @Composable
 fun FaqGroup(groupNameText : String?, items : List<JsonLoader.FaqDataItem>) {
     //val columnModifier = Modifier.padding(vertical = 5.dp)
-    Column(
-        modifier = Modifier.padding(vertical = 10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (groupNameText != null) {
+//    Column(
+//        modifier = Modifier.padding(vertical = 10.dp),
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+    if (groupNameText != null) {
+        Column(
+            modifier = Modifier.padding(vertical = 10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            val expanded = remember { mutableStateOf(true) }
             val groupNameModifier = Modifier.padding(vertical = 5.dp)
                 .padding(start = 5.dp)
-                .weight(15f)
+                .weight(20f)
                 .fillMaxWidth()
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -139,21 +155,32 @@ fun FaqGroup(groupNameText : String?, items : List<JsonLoader.FaqDataItem>) {
                 )
                 GroupTitle(groupNameText, groupNameModifier)
                 IconButton(
-                    onClick = { },
-                    modifier = Modifier.height(10.dp),
+                    onClick = { expanded.value = !expanded.value },
+                    modifier = Modifier.fillMaxHeight(),//.height(10.dp),
                     colors = iconColors
                 ) {
                     Icon(
-                        Icons.Outlined.KeyboardArrowUp,
-                        contentDescription = "ArrowUp",
+                        imageVector = if (expanded.value)
+                            Icons.Outlined.KeyboardArrowUp else
+                            Icons.Outlined.KeyboardArrowDown,
+                        contentDescription = "Expander",
+//                        modifier = Modifier.toggleable(
+//                            expanded.value,
+//                            onValueChange = { expanded.value = it }
+//                        ),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
+            if (expanded.value)
+                FaqBlock(items)
         }
-        FaqBlock(items)
     }
+    else
+        FaqBlock(items)
+    //FaqBlock(items)
 }
+//}
 
 @Composable
 fun FaqBlock(faqDataItems : List<JsonLoader.FaqDataItem>) {

@@ -66,7 +66,7 @@ fun FaqGroup(question : String, answer : String) {
             .padding(start = 10.dp)
             .fillMaxWidth()
         GroupTitle(question, groupNameModifier)
-        Plate(modifier = Modifier.padding(horizontal = 5.dp).fillMaxWidth()) {
+        Plate(modifier = Modifier.padding(horizontal = 10.dp).fillMaxWidth()) {
             Text(
                 answer,
                 modifier = Modifier.padding(10.dp).fillMaxSize(),
