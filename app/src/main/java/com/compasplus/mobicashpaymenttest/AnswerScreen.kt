@@ -81,8 +81,8 @@ fun FaqGroup(question : String, answer : String) {
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun AnswerScreenPreview() {
-    val faqDataItem = PreviewFaqTestData().oneItem
-    val question = faqDataItem.Question
-    val answer = faqDataItem.Answer
-    ScreenContent(question, answer)
+//    val faqDataItem = PreviewFaqTestData().oneItem
+//    val question = faqDataItem.Question
+//    val answer = faqDataItem.Answer
+//    ScreenContent(question, answer)
 }

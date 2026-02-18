@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,8 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.selection.toggleable
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
@@ -35,6 +32,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,12 +42,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.compasplus.mobicashpaymenttest.data.FaqDataItem
+import com.compasplus.mobicashpaymenttest.data.FaqMap
+import com.compasplus.mobicashpaymenttest.data.JsonLoader
 import com.compasplus.mobicashpaymenttest.data.PreviewFaqTestData
 import com.compasplus.mobicashpaymenttest.ui.components.GroupTitle
 import com.compasplus.mobicashpaymenttest.ui.components.Plate
 //import com.compasplus.mobicashpaymenttest.ui.components.SearchBar
 import com.compasplus.mobicashpaymenttest.ui.components.SecondaryScreen
 import com.compasplus.mobicashpaymenttest.ui.components.SimpleSearchBar
+import com.compasplus.mobicashpaymenttest.ui.screens.main.FaqViewModel
 
 //import com.compasplus.mobicashpaymenttest.ui.theme.White70
 //import com.compasplus.mobicashpaymenttest.ui.theme.colorSchemeLocal
@@ -59,11 +63,11 @@ import com.compasplus.mobicashpaymenttest.ui.components.SimpleSearchBar
 class MainScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val jsonLoader = JsonLoader(this)
-        val data = jsonLoader.getFaqData()
+//        val jsonLoader = JsonLoader(this)
+//        val data = jsonLoader.getFaqData()
         enableEdgeToEdge()
         setContent {
-            ScreenContent(data)
+            ScreenContent(/*data*/)
 //            CompositionLocalProvider(localContext provides this) {
 //
 //            }
@@ -75,16 +79,19 @@ class MainScreen : ComponentActivity() {
 //val inputText = reme
 
 @Composable
-fun ScreenContent(data : Map<String?, List<JsonLoader.FaqDataItem>>) {
+fun ScreenContent(vm : FaqViewModel = viewModel()) {
+    val data = vm.faqData.value
     val modifier = Modifier.padding(horizontal = 10.dp)
     SecondaryScreen(stringResource(R.string.faq_title)) {
-        SimpleSearchBar(modifier.padding(vertical = 13.dp))
-        FaqPayload(data, modifier/*.padding(top = 5.dp)*/)
+        if (data != null) {
+            SimpleSearchBar(modifier.padding(vertical = 13.dp))
+            FaqPayload(data, modifier.padding(bottom = 10.dp)/*.padding(top = 5.dp)*/)
+        }
     }
 }
 
 @Composable
-fun FaqPayload(groups: Map<String?, List<JsonLoader.FaqDataItem>>, modifier: Modifier = Modifier) {
+fun FaqPayload(data: FaqMap, modifier: Modifier = Modifier) {
     val payloadModifier = modifier.fillMaxWidth()
         //.padding(horizontal = 5.dp)
         //.verticalScroll(ScrollState(0))
@@ -106,7 +113,7 @@ fun FaqPayload(groups: Map<String?, List<JsonLoader.FaqDataItem>>, modifier: Mod
 //
 //        }
 
-        for (group in groups) {
+        for (group in data.items) {
             item {
                 FaqGroup(group.key, group.value)
             }
@@ -126,7 +133,7 @@ fun FaqPayload(groups: Map<String?, List<JsonLoader.FaqDataItem>>, modifier: Mod
 //}
 
 @Composable
-fun FaqGroup(groupNameText : String?, items : List<JsonLoader.FaqDataItem>) {
+fun FaqGroup(groupNameText : String?, items : List<FaqDataItem>) {
     //val columnModifier = Modifier.padding(vertical = 5.dp)
 //    Column(
 //        modifier = Modifier.padding(vertical = 10.dp),
@@ -137,7 +144,7 @@ fun FaqGroup(groupNameText : String?, items : List<JsonLoader.FaqDataItem>) {
             modifier = Modifier.padding(vertical = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val expanded = remember { mutableStateOf(true) }
+            val expanded = rememberSaveable { mutableStateOf(true) }
             val groupNameModifier = Modifier.padding(vertical = 5.dp)
                 .padding(start = 5.dp)
                 .weight(20f)
@@ -174,6 +181,9 @@ fun FaqGroup(groupNameText : String?, items : List<JsonLoader.FaqDataItem>) {
             }
             if (expanded.value)
                 FaqBlock(items)
+            else
+                Box(modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+                    .height(2.dp).fillMaxWidth())
         }
     }
     else
@@ -183,7 +193,7 @@ fun FaqGroup(groupNameText : String?, items : List<JsonLoader.FaqDataItem>) {
 //}
 
 @Composable
-fun FaqBlock(faqDataItems : List<JsonLoader.FaqDataItem>) {
+fun FaqBlock(faqDataItems : List<FaqDataItem>) {
     //val color = MaterialTheme.colorScheme.onBackground
     Plate {
         Column(modifier = Modifier.fillMaxWidth()
@@ -208,7 +218,7 @@ fun FaqSplitter() {
 }
 
 @Composable
-fun FaqButton(faqDataItem: JsonLoader.FaqDataItem) {
+fun FaqButton(faqDataItem: FaqDataItem) {
     //val colorScheme = localColorScheme.current
     //val colorScheme = LightColorScheme
 //    val buttonColors : ButtonColors = ButtonColors(
@@ -220,7 +230,7 @@ fun FaqButton(faqDataItem: JsonLoader.FaqDataItem) {
 
     //val buttonCode = remember { faqDataItem.Code }
     val context = LocalContext.current
-    val buttonCode = faqDataItem.Code
+    val buttonCode = faqDataItem.code
     val buttonColors = ButtonColors(
         MaterialTheme.colorScheme.surface,
         MaterialTheme.colorScheme.onSurface,
@@ -256,8 +266,8 @@ fun FaqButton(faqDataItem: JsonLoader.FaqDataItem) {
         onClick = {
             Log.d("MainScreen", "Start AnswerScreen with code $buttonCode")
             val intent = Intent(context, AnswerScreen::class.java)
-            intent.putExtra("Question", faqDataItem.Question)
-            intent.putExtra("Answer", faqDataItem.Answer)
+            intent.putExtra("Question", faqDataItem.question)
+            intent.putExtra("Answer", faqDataItem.answer)
             context.startActivity(intent)
                   },
         modifier = Modifier.fillMaxWidth(),
@@ -276,7 +286,7 @@ fun FaqButton(faqDataItem: JsonLoader.FaqDataItem) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                faqDataItem.Question,
+                faqDataItem.question,
                 modifier = Modifier.weight(15f),//.padding(vertical = 7.dp),//.padding(horizontal = 2.dp),
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                 textAlign = TextAlign.Left
@@ -302,6 +312,6 @@ fun FaqButton(faqDataItem: JsonLoader.FaqDataItem) {
 @Preview(showSystemUi = true, showBackground = true/*, uiMode = Configuration.UI_MODE_NIGHT_YES*/)
 @Composable
 fun MainScreenPreview() {
-    val testData = PreviewFaqTestData().prepareTestData()
-    ScreenContent(testData)
+//    val testData = PreviewFaqTestData().prepareTestData()
+//    ScreenContent(testData)
 }
