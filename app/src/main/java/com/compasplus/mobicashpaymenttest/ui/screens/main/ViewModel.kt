@@ -1,8 +1,8 @@
 package com.compasplus.mobicashpaymenttest.ui.screens.main
 
-import android.content.Context
+import android.app.Application
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.compasplus.mobicashpaymenttest.data.JsonLoader
 import com.compasplus.mobicashpaymenttest.data.FaqMap
@@ -10,26 +10,38 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FaqViewModel(context: Context) : ViewModel() {
+class FaqViewModel(application: Application) : AndroidViewModel(application) {
+    enum class FaqDataState(val value: Byte) {
+        LOADING_ERROR(-1),
+        OK(0),
+        QUERY_NOT_FOUND(1)
+    }
     private var allFaqData : FaqMap? = null
-    private var displayFaqData : FaqMap? = null
-    val faqData = mutableStateOf(displayFaqData)
+    val faqData = mutableStateOf(allFaqData)
+    val faqState = mutableStateOf(FaqDataState.OK)
 
     init {
+        val jsonLoader = JsonLoader(getApplication())
         viewModelScope.launch(Dispatchers.IO) {
-            val jsonLoader = JsonLoader(context)
-            allFaqData = jsonLoader.getFaqData()
+            try {
+                allFaqData = jsonLoader.getFaqData()
+            }
+            catch (exc : Exception) {
+                faqState.value = FaqDataState.LOADING_ERROR
+            }
             withContext(Dispatchers.Main) {
-                displayFaqData = allFaqData
+                reset()
             }
         }
     }
 
-    fun Find(query : String) {
+    fun find(query : String) {
 
     }
 
-    fun Reset() {
-        displayFaqData = allFaqData
+    fun reset() {
+        if (faqState.value == FaqDataState.QUERY_NOT_FOUND)
+            faqState.value = FaqDataState.OK
+        faqData.value = allFaqData
     }
 }
