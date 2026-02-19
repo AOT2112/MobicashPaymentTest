@@ -30,11 +30,8 @@ import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,31 +40,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.compasplus.mobicashpaymenttest.data.FaqDataItem
 import com.compasplus.mobicashpaymenttest.data.FaqMap
 import com.compasplus.mobicashpaymenttest.ui.components.GroupTitle
 import com.compasplus.mobicashpaymenttest.ui.components.Plate
-//import com.compasplus.mobicashpaymenttest.ui.components.SearchBar
 import com.compasplus.mobicashpaymenttest.ui.components.SecondaryScreen
 import com.compasplus.mobicashpaymenttest.ui.components.SimpleSearchBar
 import com.compasplus.mobicashpaymenttest.ui.screens.main.FaqViewModel
 
-//import com.compasplus.mobicashpaymenttest.ui.theme.White70
-//import com.compasplus.mobicashpaymenttest.ui.theme.colorSchemeLocal
-
-//import com.compasplus.mobicashpaymenttest.ui.theme.localColorScheme
-
 class MainScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val jsonLoader = JsonLoader(this)
-//        val data = jsonLoader.getFaqData()
         enableEdgeToEdge()
         setContent {
-            ScreenContent(/*data*/)
+            ScreenContent()
         }
     }
 
@@ -115,52 +102,22 @@ fun PlainText(text : String, modifier: Modifier = Modifier) {
 @Composable
 fun FaqPayload(data: FaqMap, modifier: Modifier = Modifier) {
     val payloadModifier = modifier.fillMaxWidth()
-        //.padding(horizontal = 5.dp)
-        //.verticalScroll(ScrollState(0))
-
-//    Column(
-//        modifier = payloadModifier,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        for (group in groups) {
-//            FaqGroup(group.key, group.value)
-//        }
-//    }
 
     LazyColumn(
         modifier = payloadModifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-//        items(groups) { group ->
-//
-//        }
 
         for (group in data.items) {
             item {
                 FaqGroup(group.key, group.value)
             }
-//            val groupNameText = group.key
-//            if (groupNameText != null) {
-//                item {
-//                    //GroupTitle(groupNameText, groupNameModifier)
-//                    //FaqGroup(group.key, group.value)
-//                }
-//            }
         }
     }
 }
-//@Composable
-//fun Message(text: String, textModifier: Modifier = Modifier) {
-//    Text(text, textModifier, fontSize = 28.sp, textAlign = TextAlign.Center)
-//}
 
 @Composable
 fun FaqGroup(groupNameText : String?, items : List<FaqDataItem>) {
-    //val columnModifier = Modifier.padding(vertical = 5.dp)
-//    Column(
-//        modifier = Modifier.padding(vertical = 10.dp),
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
     if (groupNameText != null) {
         Column(
             modifier = Modifier.padding(vertical = 10.dp),
@@ -193,10 +150,6 @@ fun FaqGroup(groupNameText : String?, items : List<FaqDataItem>) {
                             Icons.Outlined.KeyboardArrowUp else
                             Icons.Outlined.KeyboardArrowDown,
                         contentDescription = "Expander",
-//                        modifier = Modifier.toggleable(
-//                            expanded.value,
-//                            onValueChange = { expanded.value = it }
-//                        ),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -210,17 +163,13 @@ fun FaqGroup(groupNameText : String?, items : List<FaqDataItem>) {
     }
     else
         FaqBlock(items)
-    //FaqBlock(items)
 }
-//}
 
 @Composable
 fun FaqBlock(faqDataItems : List<FaqDataItem>) {
     //val color = MaterialTheme.colorScheme.onBackground
     Plate(Modifier.padding(bottom = 10.dp)) {
         Column(modifier = Modifier.fillMaxWidth()
-//            .shadow(5.dp, shape = RoundedCornerShape(10.dp))
-//            .clip(shape = RoundedCornerShape(10.dp))
         ) {
             for (item in faqDataItems) {
                 FaqButton(item)
@@ -241,15 +190,6 @@ fun FaqSplitter() {
 
 @Composable
 fun FaqButton(faqDataItem: FaqDataItem) {
-    //val colorScheme = localColorScheme.current
-    //val colorScheme = LightColorScheme
-//    val buttonColors : ButtonColors = ButtonColors(
-//        colorScheme.onPrimary,
-//        colorScheme.onBackground,
-//        colorScheme.onPrimary,
-//        colorScheme.onBackground
-//    )
-
     //val buttonCode = remember { faqDataItem.Code }
     val context = LocalContext.current
     val buttonCode = faqDataItem.code
@@ -260,30 +200,6 @@ fun FaqButton(faqDataItem: FaqDataItem) {
         MaterialTheme.colorScheme.onSurface
     )
 
-//    val buttonColors : ButtonColors = ButtonColors(
-//        Color.White,
-//        Color(0xFF1C1B1F),
-//        Color.White,
-//        Color(0xFF1C1B1F)
-//    )
-
-
-//    val buttonColors : ButtonColors =
-//        when {
-//            isSystemInDarkTheme() -> ButtonColors(DarkColorScheme.)
-//        }
-//    Box(modifier = Modifier.background(Color.White)
-//        .height(15.dp)
-//        .fillMaxWidth(),
-//        contentAlignment = Alignment.CenterStart
-//    ) {
-//        Text(
-//            text,
-//            modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp),
-//            fontSize = 12.sp,
-//            textAlign = TextAlign.Left
-//        )
-//    }
     Button(
         onClick = {
             Log.d("MainScreen", "Start AnswerScreen with code $buttonCode")
@@ -329,11 +245,4 @@ fun FaqButton(faqDataItem: FaqDataItem) {
             }
         }
     }
-}
-
-@Preview(showSystemUi = true, showBackground = true/*, uiMode = Configuration.UI_MODE_NIGHT_YES*/)
-@Composable
-fun MainScreenPreview() {
-//    val testData = PreviewFaqTestData().prepareTestData()
-//    ScreenContent(testData)
 }

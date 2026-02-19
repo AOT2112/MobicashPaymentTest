@@ -1,7 +1,5 @@
 package com.compasplus.mobicashpaymenttest.data
 
-import android.os.Parcel
-import android.os.Parcelable
 import androidx.compose.ui.text.AnnotatedString
 import kotlinx.serialization.Serializable
 
