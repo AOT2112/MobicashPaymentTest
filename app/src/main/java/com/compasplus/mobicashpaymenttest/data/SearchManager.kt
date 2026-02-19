@@ -1,31 +1,41 @@
 package com.compasplus.mobicashpaymenttest.data
 
-import android.text.TextUtils
-import androidx.compose.ui.text.AnnotatedString
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+class SearchManager() {
+    val regexSplitter : Regex = Regex("""[\s,!?.]+""")
 
-class SearchManager(/*coroutineScope: CoroutineScope*/) {
-    //val coroutine = coroutineScope
-    /*suspend*/
-    //val regexSplitter : Regex = ""
-    fun findText(query : String) : FaqMap {
+//    fun findText(query : String, faqMap: FaqMap) : FaqMap {
+//        val queryWords = query.split(regexSplitter)
+//        val newFaqMap = faqMap.copy()
+//        val result = newFaqMap.items.filter { entry ->
+//            val list = entry.value.forEach {
+//
+//            }
+//        }
+//
+//    }
 
-        //CoroutineScope(Dispatchers.Default)
-
-        return FaqMap(mapOf(
-            "" to
-            listOf(FaqDataItem
-                ("",
-                "",
-                AnnotatedString(""),
-                AnnotatedString(""))
-            ))
-        )
-    }
-
-    private fun findWord(word : String) {
-
+    fun findText(query : String, faqMap: FaqMap) : FaqMap {
+        val queryWords = query.split(regexSplitter)
+        val newFaqMap = faqMap.copy()
+        val result = newFaqMap.items.filter { entry ->
+            val list = entry.value.filter { item ->
+                var isExist = false
+                queryWords.forEach { word ->
+                    val regexWord = Regex(
+                        word,
+                        setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE)
+                    )
+                    val questionMatches = regexWord.findAll(item.question).toList()
+                    val answerMatches = regexWord.findAll(item.answer).toList()
+                    isExist = questionMatches.isNotEmpty() || answerMatches.isNotEmpty()
+                    item.question = addHighlight(questionMatches, item.question)
+                    item.answer = addHighlight(questionMatches, item.answer)
+                }
+                return@filter isExist
+            }
+//            return@filter false
+            return@filter list.isNotEmpty()
+        }
+        return FaqMap(result)
     }
 }

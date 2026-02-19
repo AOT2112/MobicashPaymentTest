@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Платежи Мобикеш</string>
     <string name="data_loading_error">An error occurred when loading data</string>
+    <string name="data_searching_not_found">No results found</string>
     <string name="faq_title">F.A.Q.</string>
     <string name="search">Search</string>
 </resources>

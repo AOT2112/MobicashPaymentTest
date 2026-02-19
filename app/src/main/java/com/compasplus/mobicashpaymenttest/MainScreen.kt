@@ -30,9 +30,11 @@ import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,8 +48,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.compasplus.mobicashpaymenttest.data.FaqDataItem
 import com.compasplus.mobicashpaymenttest.data.FaqMap
-import com.compasplus.mobicashpaymenttest.data.JsonLoader
-import com.compasplus.mobicashpaymenttest.data.PreviewFaqTestData
 import com.compasplus.mobicashpaymenttest.ui.components.GroupTitle
 import com.compasplus.mobicashpaymenttest.ui.components.Plate
 //import com.compasplus.mobicashpaymenttest.ui.components.SearchBar
@@ -68,26 +68,48 @@ class MainScreen : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ScreenContent(/*data*/)
-//            CompositionLocalProvider(localContext provides this) {
-//
-//            }
+        }
+    }
+
+}
+
+@Composable
+fun ScreenContent(viewModel : FaqViewModel = viewModel()) {
+    val data = viewModel.faqData.value
+    val state = viewModel.faqState.value
+    val modifier = Modifier.padding(horizontal = 10.dp)
+    SecondaryScreen(stringResource(R.string.faq_title)) {
+        if (data != null) {
+            when (state) {
+                FaqViewModel.FaqDataState.OK -> {
+                    FaqSearchBar(viewModel, modifier)
+                    FaqPayload(data, modifier /*modifier.padding(bottom = 10.dp).padding(top = 5.dp)*/)
+                }
+                FaqViewModel.FaqDataState.LOADING_ERROR -> {
+                    PlainText(stringResource(R.string.data_loading_error))
+                }
+                FaqViewModel.FaqDataState.QUERY_NOT_FOUND -> {
+                    FaqSearchBar(viewModel, modifier)
+                    PlainText(stringResource(R.string.data_searching_not_found))
+                }
+            }
         }
     }
 }
 
-//val localContext = staticCompositionLocalOf<Context?> { null }
-//val inputText = reme
+@Composable
+fun FaqSearchBar(viewModel: FaqViewModel, modifier: Modifier = Modifier) {
+    SimpleSearchBar(viewModel, modifier.padding(vertical = 13.dp))
+}
 
 @Composable
-fun ScreenContent(vm : FaqViewModel = viewModel()) {
-    val data = vm.faqData.value
-    val modifier = Modifier.padding(horizontal = 10.dp)
-    SecondaryScreen(stringResource(R.string.faq_title)) {
-        if (data != null) {
-            SimpleSearchBar(modifier.padding(vertical = 13.dp))
-            FaqPayload(data, modifier.padding(bottom = 10.dp)/*.padding(top = 5.dp)*/)
-        }
-    }
+fun PlainText(text : String, modifier: Modifier = Modifier) {
+    Text(
+        text,
+        modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.onSurface,
+        fontSize = MaterialTheme.typography.bodyLarge.fontSize
+    )
 }
 
 @Composable
@@ -145,9 +167,9 @@ fun FaqGroup(groupNameText : String?, items : List<FaqDataItem>) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val expanded = rememberSaveable { mutableStateOf(true) }
-            val groupNameModifier = Modifier.padding(vertical = 5.dp)
+            val groupNameModifier = Modifier//.padding(vertical = 5.dp)
                 .padding(start = 5.dp)
-                .weight(20f)
+                .weight(15f)
                 .fillMaxWidth()
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -163,7 +185,7 @@ fun FaqGroup(groupNameText : String?, items : List<FaqDataItem>) {
                 GroupTitle(groupNameText, groupNameModifier)
                 IconButton(
                     onClick = { expanded.value = !expanded.value },
-                    modifier = Modifier.fillMaxHeight(),//.height(10.dp),
+                    modifier = Modifier.weight(1f).fillMaxHeight(),//.height(10.dp),
                     colors = iconColors
                 ) {
                     Icon(
@@ -183,7 +205,7 @@ fun FaqGroup(groupNameText : String?, items : List<FaqDataItem>) {
                 FaqBlock(items)
             else
                 Box(modifier = Modifier.background(MaterialTheme.colorScheme.primary)
-                    .height(2.dp).fillMaxWidth())
+                    .height(1.dp).fillMaxWidth())
         }
     }
     else
@@ -195,7 +217,7 @@ fun FaqGroup(groupNameText : String?, items : List<FaqDataItem>) {
 @Composable
 fun FaqBlock(faqDataItems : List<FaqDataItem>) {
     //val color = MaterialTheme.colorScheme.onBackground
-    Plate {
+    Plate(Modifier.padding(bottom = 10.dp)) {
         Column(modifier = Modifier.fillMaxWidth()
 //            .shadow(5.dp, shape = RoundedCornerShape(10.dp))
 //            .clip(shape = RoundedCornerShape(10.dp))
