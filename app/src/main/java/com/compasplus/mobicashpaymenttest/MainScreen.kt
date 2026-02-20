@@ -1,5 +1,6 @@
 package com.compasplus.mobicashpaymenttest
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -52,16 +53,20 @@ import com.compasplus.mobicashpaymenttest.ui.screens.main.FaqViewModel
 class MainScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val speechInputManager = SpeechInputManager(this)
         enableEdgeToEdge()
         setContent {
-            ScreenContent()
+            ScreenContent(speechInputManager)
         }
     }
 
 }
 
 @Composable
-fun ScreenContent(viewModel : FaqViewModel = viewModel()) {
+fun ScreenContent(
+    speechInput: SpeechInputManager,
+    viewModel : FaqViewModel = viewModel()
+) {
     val data = viewModel.faqData.value
     val state = viewModel.faqState.value
     val modifier = Modifier.padding(horizontal = 10.dp)
@@ -69,14 +74,14 @@ fun ScreenContent(viewModel : FaqViewModel = viewModel()) {
         if (data != null) {
             when (state) {
                 FaqViewModel.FaqDataState.OK -> {
-                    FaqSearchBar(viewModel, modifier)
+                    FaqSearchBar(viewModel, speechInput, modifier)
                     FaqPayload(data, modifier /*modifier.padding(bottom = 10.dp).padding(top = 5.dp)*/)
                 }
                 FaqViewModel.FaqDataState.LOADING_ERROR -> {
                     PlainText(stringResource(R.string.data_loading_error))
                 }
                 FaqViewModel.FaqDataState.QUERY_NOT_FOUND -> {
-                    FaqSearchBar(viewModel, modifier)
+                    FaqSearchBar(viewModel, speechInput, modifier)
                     PlainText(stringResource(R.string.data_searching_not_found))
                 }
             }
@@ -85,8 +90,12 @@ fun ScreenContent(viewModel : FaqViewModel = viewModel()) {
 }
 
 @Composable
-fun FaqSearchBar(viewModel: FaqViewModel, modifier: Modifier = Modifier) {
-    SimpleSearchBar(viewModel, modifier.padding(vertical = 13.dp))
+fun FaqSearchBar(
+    viewModel: FaqViewModel,
+    speechInput: SpeechInputManager,
+    modifier: Modifier = Modifier
+) {
+    SimpleSearchBar(viewModel, speechInput, modifier.padding(vertical = 13.dp))
 }
 
 @Composable

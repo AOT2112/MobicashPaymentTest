@@ -1,12 +1,13 @@
 package com.compasplus.mobicashpaymenttest.ui.components
 
+import android.content.Context
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,14 +24,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.compasplus.mobicashpaymenttest.R
+import com.compasplus.mobicashpaymenttest.SpeechInputManager
 import com.compasplus.mobicashpaymenttest.ui.screens.main.FaqViewModel
 
 @Composable
-fun SimpleSearchBar(viewModel : FaqViewModel, modifier : Modifier = Modifier) {
+fun SimpleSearchBar(
+    viewModel : FaqViewModel,
+    speechInput: SpeechInputManager,
+    modifier : Modifier = Modifier,
+) {
+    val context = LocalContext.current
     val containerColor = MaterialTheme.colorScheme.surface
     val iconsColor = MaterialTheme.colorScheme.surfaceTint
     val textFieldColors = TextFieldDefaults.colors(
@@ -103,10 +111,12 @@ fun SimpleSearchBar(viewModel : FaqViewModel, modifier : Modifier = Modifier) {
 //                    if (query.isNullOrEmpty()) {
                     if (query.isEmpty()) {
                         IconButton(
-                            onClick = { }
+                            onClick = {
+                                speechInput.getSpeechInput(context)
+                            }
                         ) {
                             Icon(
-                                Icons.Outlined.Check,
+                                Icons.Outlined.Mic,
                                 contentDescription = "Voice"
                             )
                         }
