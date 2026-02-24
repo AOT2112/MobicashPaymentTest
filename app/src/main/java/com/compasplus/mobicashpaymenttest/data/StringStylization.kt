@@ -13,7 +13,7 @@ val searchHighlightStyle = SpanStyle(
 val paragraphBoldStyle = SpanStyle(
     fontWeight = FontWeight.Bold
 )
-val regexParagraphFinder = Regex("""\n\n+\.""")
+val regexParagraphFinder = Regex("""\n\n.+?\.""")
 
 fun getAnnotatedFromHighlighted(highlightedString: HighlightedString) : AnnotatedString {
     val result = buildAnnotatedString {
@@ -26,7 +26,7 @@ fun getAnnotatedFromHighlighted(highlightedString: HighlightedString) : Annotate
 }
 
 fun addParagraphBolding(annotatedString : AnnotatedString) : AnnotatedString {
-    val matches = regexParagraphFinder.findAll(annotatedString)
+    val matches = regexParagraphFinder.findAll(annotatedString).toList()
     val result = buildAnnotatedString {
         append(annotatedString)
         matches.forEach {

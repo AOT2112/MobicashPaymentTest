@@ -20,6 +20,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.compasplus.mobicashpaymenttest.data.HighlightedString
+import com.compasplus.mobicashpaymenttest.data.addParagraphBolding
 import com.compasplus.mobicashpaymenttest.data.getAnnotatedFromHighlighted
 import com.compasplus.mobicashpaymenttest.ui.components.GroupTitle
 import com.compasplus.mobicashpaymenttest.ui.components.Plate
@@ -32,7 +33,7 @@ class AnswerScreen : ComponentActivity() {
 
         val questionJson = intent.getStringExtra("Question")
         val answerJson = intent.getStringExtra("Answer")
-        //val code = intent.getStringExtra("Code")
+        val code = intent.getStringExtra("Code") ?: ""
 
         val question = Json.decodeFromString<HighlightedString>(questionJson ?: "")
         val answer = Json.decodeFromString<HighlightedString>(answerJson ?: "")
@@ -40,6 +41,7 @@ class AnswerScreen : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ScreenContent(
+                code,
                 getAnnotatedFromHighlighted(question),
                 getAnnotatedFromHighlighted(answer)
             )
@@ -48,16 +50,16 @@ class AnswerScreen : ComponentActivity() {
 }
 
 @Composable
-fun ScreenContent(question : AnnotatedString, answer : AnnotatedString) {
+fun ScreenContent(code : String, question : AnnotatedString, answer : AnnotatedString) {
     SecondaryScreen(stringResource(R.string.faq_title)) {
         if (question.text.isNotEmpty() && answer.text.isNotEmpty()) {
-            FaqGroup(question, answer)
+            FaqGroup(code, question, answer)
         }
     }
 }
 
 @Composable
-fun FaqGroup(question : AnnotatedString, answer : AnnotatedString) {
+fun FaqGroup(code: String, question : AnnotatedString, answer : AnnotatedString) {
     Column(
         modifier = Modifier.padding(vertical = 10.dp)
             .fillMaxWidth()
@@ -68,11 +70,17 @@ fun FaqGroup(question : AnnotatedString, answer : AnnotatedString) {
             .padding(start = 10.dp)
             .fillMaxWidth()
         GroupTitle(question, groupNameModifier)
-        Plate(modifier = Modifier.padding(horizontal = 10.dp).fillMaxWidth()) {
+        Plate(modifier = Modifier.padding(horizontal = 10.dp)
+            .padding(bottom = 5.dp)
+            .fillMaxWidth())
+        {
             Text(
-                answer,
+                text = if (code == "q1-1")
+                    addParagraphBolding(answer)
+                else
+                    answer,
                 modifier = Modifier.padding(10.dp).fillMaxSize(),
-                //color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.secondary,
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                 textAlign = TextAlign.Left
             )

@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -73,39 +75,17 @@ fun ScreenContent(
     val modifier = Modifier.padding(horizontal = 10.dp)
     SecondaryScreen(stringResource(R.string.faq_title)) {
 
-//    if (data != null) {
-//        when (state) {
-//            FaqViewModel.FaqDataState.OK -> {
-//                FaqSearchBar(viewModel, speechInput, modifier)
-//                FaqPayload(
-//                    data,
-//                    modifier /*modifier.padding(bottom = 10.dp).padding(top = 5.dp)*/
-//                )
-//            }
-//            FaqViewModel.FaqDataState.LOADING_ERROR -> {
-//                PlainText(stringResource(R.string.data_loading_error))
-//            }
-//            FaqViewModel.FaqDataState.QUERY_NOT_FOUND -> {
-//                FaqSearchBar(viewModel, speechInput, modifier)
-//                PlainText(stringResource(R.string.data_searching_not_found))
-//            }
-//        }
-//    }
-
-
-//        if (data != null) {
-            if (dataIsOk && data != null) {
-                FaqSearchBar(viewModel, speechInput, modifier)
+        if (data != null) {
+            if (dataIsOk) {
+                SimpleSearchBar(viewModel, speechInput, modifier.padding(vertical = 13.dp))
                 when (state) {
                     FaqViewModel.FaqDataState.OK -> {
-//                        FaqSearchBar(viewModel, speechInput, modifier)
                         FaqPayload(
                             data,
-                            modifier /*modifier.padding(bottom = 10.dp).padding(top = 5.dp)*/
+                            modifier
                         )
                     }
                     FaqViewModel.FaqDataState.QUERY_NOT_FOUND -> {
-//                        FaqSearchBar(viewModel, speechInput, modifier)
                         PlainText(stringResource(R.string.data_searching_not_found))
                     }
                     else -> {  }
@@ -114,23 +94,15 @@ fun ScreenContent(
             else {
                 PlainText(stringResource(R.string.data_loading_error))
             }
-//        }
+        }
     }
-}
-
-@Composable
-fun FaqSearchBar(
-    viewModel: FaqViewModel,
-    speechInput: SpeechInputManager,
-    modifier: Modifier = Modifier
-) {
-    SimpleSearchBar(viewModel, speechInput, modifier.padding(vertical = 13.dp))
 }
 
 @Composable
 fun PlainText(text : String, modifier: Modifier = Modifier) {
     Box(
-        modifier.fillMaxSize()
+        modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text,
@@ -265,7 +237,7 @@ fun FaqButton(faqDataItem: FaqDataItem) {
         ) {
             Text(
                 getAnnotatedFromHighlighted(faqDataItem.question),
-                modifier = Modifier.weight(15f),//.padding(vertical = 7.dp),//.padding(horizontal = 2.dp),
+                modifier = Modifier.weight(15f) ,//.padding(vertical = 7.dp),//.padding(horizontal = 2.dp),
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                 textAlign = TextAlign.Left
             )
@@ -275,9 +247,10 @@ fun FaqButton(faqDataItem: FaqDataItem) {
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                    modifier = Modifier//.weight(1f)
+                    modifier = Modifier.fillMaxHeight(),
+                            //.weight(1f)
                         //.padding(horizontal = 2.dp/*, vertical = 5.dp*/)
-                        .fillMaxHeight(),
+                        //.fillMaxHeight(),
                         //.clipToBounds(),
                     contentDescription = "ArrowRight",
                     tint = MaterialTheme.colorScheme.primary
