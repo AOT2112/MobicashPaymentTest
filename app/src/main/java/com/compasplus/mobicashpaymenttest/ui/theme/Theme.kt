@@ -12,39 +12,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFFE6E6E6),
-    secondary = Color(0xFFBEBEBE),
+    primary = White90,
+    secondary = LightGray75,
     tertiary = Pink80,
 
 
-    background = Color(0xFF1C1B1F),
-    surface = Color(0xFF303030),
-    onPrimary = Color(0xFF1C1B1F),
+    background = Black90,
+    surface = DarkGray80,
+    onPrimary = Black90,
     onSecondary = Color.Black,
     onTertiary = Color.Black,
-    onBackground = Color(0xFFBEBEBE),
-    onSurface = Color(0xFFBEBEBE)
+    onBackground = LightGray75,
+    onSurface = LightGray75
+
 )
 
 val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF7F7F7F),
-    secondary = Color(0xFF7F7F7F),
-    tertiary = Color(0xFFBE1E24),
+    primary = Gray50,
+    secondary = Gray50,
+    tertiary = Red75,
 
-    background = Color(0xFFEFEFEF),
+    background = White95,
     surface = Color.White,
-    surfaceTint = Color(0xFFD6D6D6),
-    surfaceVariant = Color(0xFF999999),
-    onPrimary = Color(0xFFEFEFEF),
+    surfaceTint = White85,
+    surfaceVariant = LightGray60,
+    onPrimary = White95,
     onSecondary = Color.White,
     onTertiary = Color.White,
     onBackground = Color.Black,
     onSurface = Color.Black,
 
-)
-
-//public var colorSchemeLocal : ColorScheme = LightColorScheme
-//val localColorScheme = staticCompositionLocalOf { LightColorScheme }
+    )
 
 @Composable
 fun MobicashPaymentTestTheme(
