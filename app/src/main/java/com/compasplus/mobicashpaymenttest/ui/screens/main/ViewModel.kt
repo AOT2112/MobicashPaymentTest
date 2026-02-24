@@ -42,16 +42,12 @@ class FaqViewModel(application: Application) : AndroidViewModel(application) {
 
     fun findText(query : String) {
         if (searchCoroutine?.isActive ?: false) {
-//            Log.d("ViewModel.find", "Cancelling the coroutine")
             searchCoroutine?.cancel()
         }
         if (query.isNotEmpty() && query.isNotBlank()) {
             searchCoroutine = viewModelScope.launch {
-//                Log.d("ViewModel.find.coroutineScope", "Start of coroutine")
-                delay(1500)
-//                Log.d("ViewModel.find.coroutineScope", "Waiting completed")
-//                Log.d("ViewModel.find.coroutineScope", "Searching $query")
 
+                delay(1500)
                 withContext(Dispatchers.Main) {
                     allFaqData?.let {
                         val foundedData = searchManager.findText(query, it)
@@ -63,23 +59,10 @@ class FaqViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 }
-                //delay(1000)
-//                allFaqData?.let {
-//                    faqData.value = searchManager.findText(query, it)
-//                }
-
-//                Log.d("ViewModel.find.coroutineScope", "Searching completed")
-//                Log.d("ViewModel.find.coroutineScope", "End of coroutine")
             }
         }
         else
             reset()
-
-//        if (query.isNotBlank()) {
-//            allFaqData?.let { searchManager.findText(query, it) }
-//        }
-//        else
-//            reset()
     }
 
     private fun reset() {

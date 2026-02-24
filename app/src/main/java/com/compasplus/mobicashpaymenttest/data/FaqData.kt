@@ -1,6 +1,5 @@
 package com.compasplus.mobicashpaymenttest.data
 
-import androidx.compose.ui.text.AnnotatedString
 import kotlinx.serialization.Serializable
 
 @Suppress("PropertyName")

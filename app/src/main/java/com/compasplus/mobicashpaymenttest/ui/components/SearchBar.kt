@@ -58,7 +58,6 @@ fun SimpleSearchBar(
 
     @OptIn(ExperimentalMaterial3Api::class)
     val searchState = rememberSearchBarState()
-//    var query by remember { mutableStateOf<String?>(null) }
     var query by rememberSaveable { mutableStateOf("") }
 
 /*    @OptIn(ExperimentalMaterial3Api::class)
@@ -73,8 +72,6 @@ fun SimpleSearchBar(
         placeholder = { Text(text = "Search") },
         colors = SearchBarDefaults.colors(containerColor = Color(0xFFF1F1F1)),
     ){}*/
-
-    //val inputField
 
     @OptIn(ExperimentalMaterial3Api::class)
     SearchBar(
@@ -91,7 +88,6 @@ fun SimpleSearchBar(
                 expanded = false,
                 onExpandedChange = { },
                 modifier = Modifier.fillMaxHeight(),
-                //modifier = Modifier.padding(0.dp).height(10.dp),
                 placeholder = {
                     Text(
                         stringResource(R.string.search),
@@ -102,7 +98,6 @@ fun SimpleSearchBar(
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search",
-                        //tint = iconsColor
                     )
                 },
                 trailingIcon = {

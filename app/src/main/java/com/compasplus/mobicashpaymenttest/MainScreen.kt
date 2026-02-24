@@ -5,19 +5,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -139,6 +140,7 @@ fun FaqGroup(groupNameText : String?, items : List<FaqDataItem>) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val expanded = rememberSaveable { mutableStateOf(true) }
+            val rotation = animateFloatAsState(targetValue = if (expanded.value) 0f else 180f)
             val groupNameModifier = Modifier//.padding(vertical = 5.dp)
                 .padding(start = 5.dp)
                 .weight(15f)
@@ -157,23 +159,27 @@ fun FaqGroup(groupNameText : String?, items : List<FaqDataItem>) {
                 GroupTitle(groupNameText, groupNameModifier)
                 IconButton(
                     onClick = { expanded.value = !expanded.value },
-                    modifier = Modifier.weight(1f).fillMaxHeight(),//.height(10.dp),
+                    modifier = Modifier.weight(1f)
+                        .graphicsLayer(
+                            rotationZ = rotation.value
+                        )
+                        .fillMaxHeight(),
                     colors = iconColors
                 ) {
                     Icon(
-                        imageVector = if (expanded.value)
-                            Icons.Outlined.KeyboardArrowUp else
-                            Icons.Outlined.KeyboardArrowDown,
+                        imageVector = Icons.Outlined.KeyboardArrowUp,
                         contentDescription = "Expander",
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
-            if (expanded.value)
+            AnimatedVisibility(expanded.value) {
                 FaqBlock(items)
-            else
+            }
+            AnimatedVisibility(!expanded.value) {
                 Box(modifier = Modifier.background(MaterialTheme.colorScheme.primary)
                     .height(1.dp).fillMaxWidth())
+            }
         }
     }
     else
@@ -182,7 +188,6 @@ fun FaqGroup(groupNameText : String?, items : List<FaqDataItem>) {
 
 @Composable
 fun FaqBlock(faqDataItems : List<FaqDataItem>) {
-    //val color = MaterialTheme.colorScheme.onBackground
     Plate(Modifier.padding(bottom = 10.dp)) {
         Column(modifier = Modifier.fillMaxWidth()
         ) {
@@ -221,14 +226,9 @@ fun FaqButton(faqDataItem: FaqDataItem) {
             intent.putExtra("Code", faqDataItem.code)
             context.startActivity(intent) },
         modifier = Modifier.fillMaxWidth(),
-            //.heightIn(35.dp, 50.dp),
-            //.requiredHeight(40.dp),
-            //.padding(vertical = 5.dp)
-            //.aspectRatio(1f),
         shape = RectangleShape,
         colors = buttonColors,
         contentPadding = PaddingValues(horizontal = 7.dp, vertical = 10.dp)
-        //contentPadding = PaddingValues(5.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -237,21 +237,17 @@ fun FaqButton(faqDataItem: FaqDataItem) {
         ) {
             Text(
                 getAnnotatedFromHighlighted(faqDataItem.question),
-                modifier = Modifier.weight(15f) ,//.padding(vertical = 7.dp),//.padding(horizontal = 2.dp),
+                modifier = Modifier.weight(15f),
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                 textAlign = TextAlign.Left
             )
             Box(
-                modifier = Modifier.weight(1f).fillMaxHeight(),//.requiredWidth(6.dp),
+                modifier = Modifier.weight(1f).fillMaxHeight(),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                     modifier = Modifier.fillMaxHeight(),
-                            //.weight(1f)
-                        //.padding(horizontal = 2.dp/*, vertical = 5.dp*/)
-                        //.fillMaxHeight(),
-                        //.clipToBounds(),
                     contentDescription = "ArrowRight",
                     tint = MaterialTheme.colorScheme.primary
                 )
