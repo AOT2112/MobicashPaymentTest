@@ -1,6 +1,5 @@
 package com.compasplus.mobicashpaymenttest.ui.components
 
-import android.content.Context
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.compasplus.mobicashpaymenttest.R
 import com.compasplus.mobicashpaymenttest.SpeechInputManager
 import com.compasplus.mobicashpaymenttest.ui.screens.main.FaqViewModel
@@ -83,17 +81,17 @@ fun SimpleSearchBar(
         state = searchState,
         inputField = {
             SearchBarDefaults.InputField(
-//                query = query ?: "",
                 query = query,
                 onQueryChange =
                     {
                         query = it
-                        viewModel.find(query)
+                        viewModel.findText(query)
                     },
                 onSearch = { },
                 expanded = false,
                 onExpandedChange = { },
                 modifier = Modifier.fillMaxHeight(),
+                //modifier = Modifier.padding(0.dp).height(10.dp),
                 placeholder = {
                     Text(
                         stringResource(R.string.search),
@@ -108,7 +106,6 @@ fun SimpleSearchBar(
                     )
                 },
                 trailingIcon = {
-//                    if (query.isNullOrEmpty()) {
                     if (query.isEmpty()) {
                         IconButton(
                             onClick = {
@@ -123,8 +120,10 @@ fun SimpleSearchBar(
                     }
                     else {
                         IconButton(
-//                            onClick = { query = null }
-                            onClick = { query = "" }
+                            onClick = {
+                                query = ""
+                                viewModel.findText(query)
+                            }
                         ) {
                             Icon(
                                 Icons.Outlined.Close,

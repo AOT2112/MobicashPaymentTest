@@ -16,35 +16,48 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.compasplus.mobicashpaymenttest.data.HighlightedString
+import com.compasplus.mobicashpaymenttest.data.getAnnotatedFromHighlighted
 import com.compasplus.mobicashpaymenttest.ui.components.GroupTitle
 import com.compasplus.mobicashpaymenttest.ui.components.Plate
 import com.compasplus.mobicashpaymenttest.ui.components.SecondaryScreen
+import kotlinx.serialization.json.Json
 
 class AnswerScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val question = intent.getStringExtra("Question")
-        val answer = intent.getStringExtra("Answer")
+
+        val questionJson = intent.getStringExtra("Question")
+        val answerJson = intent.getStringExtra("Answer")
+        //val code = intent.getStringExtra("Code")
+
+        val question = Json.decodeFromString<HighlightedString>(questionJson ?: "")
+        val answer = Json.decodeFromString<HighlightedString>(answerJson ?: "")
+
         enableEdgeToEdge()
         setContent {
-            ScreenContent(question, answer)
+            ScreenContent(
+                getAnnotatedFromHighlighted(question),
+                getAnnotatedFromHighlighted(answer)
+            )
         }
     }
 }
 
 @Composable
-fun ScreenContent(question : String?, answer : String?) {
+fun ScreenContent(question : AnnotatedString, answer : AnnotatedString) {
     SecondaryScreen(stringResource(R.string.faq_title)) {
-        if (question != null && answer != null) {
+        if (question.text.isNotEmpty() && answer.text.isNotEmpty()) {
             FaqGroup(question, answer)
         }
     }
 }
 
 @Composable
-fun FaqGroup(question : String, answer : String) {
+fun FaqGroup(question : AnnotatedString, answer : AnnotatedString) {
     Column(
         modifier = Modifier.padding(vertical = 10.dp)
             .fillMaxWidth()

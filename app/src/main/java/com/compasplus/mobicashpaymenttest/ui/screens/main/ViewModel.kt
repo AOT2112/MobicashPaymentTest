@@ -1,7 +1,6 @@
 package com.compasplus.mobicashpaymenttest.ui.screens.main
 
 import android.app.Application
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,7 +40,7 @@ class FaqViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun find(query : String) {
+    fun findText(query : String) {
         if (searchCoroutine?.isActive ?: false) {
 //            Log.d("ViewModel.find", "Cancelling the coroutine")
             searchCoroutine?.cancel()
@@ -49,7 +48,7 @@ class FaqViewModel(application: Application) : AndroidViewModel(application) {
         if (query.isNotEmpty() && query.isNotBlank()) {
             searchCoroutine = viewModelScope.launch {
 //                Log.d("ViewModel.find.coroutineScope", "Start of coroutine")
-                delay(4000)
+                delay(1500)
 //                Log.d("ViewModel.find.coroutineScope", "Waiting completed")
 //                Log.d("ViewModel.find.coroutineScope", "Searching $query")
 

@@ -16,7 +16,11 @@ class SpeechInputManager(activity: ComponentActivity) {
         // recognizer intent is present or not.
         if (!SpeechRecognizer.isRecognitionAvailable(context)) {
             // if the intent is not present we are simply displaying a toast message.
-            Toast.makeText(context, "Speech not Available", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.speech_input_error),
+                Toast.LENGTH_SHORT
+            ).show()
         } else {
             // on below line we are calling a speech recognizer intent
             val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -30,7 +34,10 @@ class SpeechInputManager(activity: ComponentActivity) {
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
 
             // on below line we are specifying prompt as Speak something
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak Something")
+            intent.putExtra(
+                RecognizerIntent.EXTRA_PROMPT,
+                context.getString(R.string.speech_prompt_display)
+            )
 
             // at last we are calling start activity
             // for result to start our activity.

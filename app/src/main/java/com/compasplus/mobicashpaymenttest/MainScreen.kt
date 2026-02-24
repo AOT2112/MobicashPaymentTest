@@ -1,9 +1,7 @@
 package com.compasplus.mobicashpaymenttest
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -44,11 +42,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.compasplus.mobicashpaymenttest.data.FaqDataItem
 import com.compasplus.mobicashpaymenttest.data.FaqMap
+import com.compasplus.mobicashpaymenttest.data.getAnnotatedFromHighlighted
 import com.compasplus.mobicashpaymenttest.ui.components.GroupTitle
 import com.compasplus.mobicashpaymenttest.ui.components.Plate
 import com.compasplus.mobicashpaymenttest.ui.components.SecondaryScreen
 import com.compasplus.mobicashpaymenttest.ui.components.SimpleSearchBar
 import com.compasplus.mobicashpaymenttest.ui.screens.main.FaqViewModel
+import kotlinx.serialization.json.Json
 
 class MainScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,23 +69,52 @@ fun ScreenContent(
 ) {
     val data = viewModel.faqData.value
     val state = viewModel.faqState.value
+    val dataIsOk = rememberSaveable { state != FaqViewModel.FaqDataState.LOADING_ERROR }
     val modifier = Modifier.padding(horizontal = 10.dp)
     SecondaryScreen(stringResource(R.string.faq_title)) {
-        if (data != null) {
-            when (state) {
-                FaqViewModel.FaqDataState.OK -> {
-                    FaqSearchBar(viewModel, speechInput, modifier)
-                    FaqPayload(data, modifier /*modifier.padding(bottom = 10.dp).padding(top = 5.dp)*/)
-                }
-                FaqViewModel.FaqDataState.LOADING_ERROR -> {
-                    PlainText(stringResource(R.string.data_loading_error))
-                }
-                FaqViewModel.FaqDataState.QUERY_NOT_FOUND -> {
-                    FaqSearchBar(viewModel, speechInput, modifier)
-                    PlainText(stringResource(R.string.data_searching_not_found))
+
+//    if (data != null) {
+//        when (state) {
+//            FaqViewModel.FaqDataState.OK -> {
+//                FaqSearchBar(viewModel, speechInput, modifier)
+//                FaqPayload(
+//                    data,
+//                    modifier /*modifier.padding(bottom = 10.dp).padding(top = 5.dp)*/
+//                )
+//            }
+//            FaqViewModel.FaqDataState.LOADING_ERROR -> {
+//                PlainText(stringResource(R.string.data_loading_error))
+//            }
+//            FaqViewModel.FaqDataState.QUERY_NOT_FOUND -> {
+//                FaqSearchBar(viewModel, speechInput, modifier)
+//                PlainText(stringResource(R.string.data_searching_not_found))
+//            }
+//        }
+//    }
+
+
+//        if (data != null) {
+            if (dataIsOk && data != null) {
+                FaqSearchBar(viewModel, speechInput, modifier)
+                when (state) {
+                    FaqViewModel.FaqDataState.OK -> {
+//                        FaqSearchBar(viewModel, speechInput, modifier)
+                        FaqPayload(
+                            data,
+                            modifier /*modifier.padding(bottom = 10.dp).padding(top = 5.dp)*/
+                        )
+                    }
+                    FaqViewModel.FaqDataState.QUERY_NOT_FOUND -> {
+//                        FaqSearchBar(viewModel, speechInput, modifier)
+                        PlainText(stringResource(R.string.data_searching_not_found))
+                    }
+                    else -> {  }
                 }
             }
-        }
+            else {
+                PlainText(stringResource(R.string.data_loading_error))
+            }
+//        }
     }
 }
 
@@ -100,12 +129,17 @@ fun FaqSearchBar(
 
 @Composable
 fun PlainText(text : String, modifier: Modifier = Modifier) {
-    Text(
-        text,
-        modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.onSurface,
-        fontSize = MaterialTheme.typography.bodyLarge.fontSize
-    )
+    Box(
+        modifier.fillMaxSize()
+    ) {
+        Text(
+            text,
+            modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 @Composable
@@ -199,9 +233,7 @@ fun FaqSplitter() {
 
 @Composable
 fun FaqButton(faqDataItem: FaqDataItem) {
-    //val buttonCode = remember { faqDataItem.Code }
     val context = LocalContext.current
-    val buttonCode = faqDataItem.code
     val buttonColors = ButtonColors(
         MaterialTheme.colorScheme.surface,
         MaterialTheme.colorScheme.onSurface,
@@ -211,21 +243,20 @@ fun FaqButton(faqDataItem: FaqDataItem) {
 
     Button(
         onClick = {
-            Log.d("MainScreen", "Start AnswerScreen with code $buttonCode")
             val intent = Intent(context, AnswerScreen::class.java)
-            intent.putExtra("Question", faqDataItem.question)
-            intent.putExtra("Answer", faqDataItem.answer)
-            context.startActivity(intent)
-                  },
+            intent.putExtra("Question", Json.encodeToString( faqDataItem.question))
+            intent.putExtra("Answer", Json.encodeToString( faqDataItem.answer))
+            intent.putExtra("Code", faqDataItem.code)
+            context.startActivity(intent) },
         modifier = Modifier.fillMaxWidth(),
             //.heightIn(35.dp, 50.dp),
             //.requiredHeight(40.dp),
             //.padding(vertical = 5.dp)
             //.aspectRatio(1f),
-            shape = RectangleShape,
-            colors = buttonColors,
-            contentPadding = PaddingValues(horizontal = 7.dp, vertical = 10.dp)
-            //contentPadding = PaddingValues(5.dp)
+        shape = RectangleShape,
+        colors = buttonColors,
+        contentPadding = PaddingValues(horizontal = 7.dp, vertical = 10.dp)
+        //contentPadding = PaddingValues(5.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -233,7 +264,7 @@ fun FaqButton(faqDataItem: FaqDataItem) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                faqDataItem.question,
+                getAnnotatedFromHighlighted(faqDataItem.question),
                 modifier = Modifier.weight(15f),//.padding(vertical = 7.dp),//.padding(horizontal = 2.dp),
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                 textAlign = TextAlign.Left

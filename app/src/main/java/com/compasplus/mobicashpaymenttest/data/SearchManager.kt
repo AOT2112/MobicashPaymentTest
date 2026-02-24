@@ -1,41 +1,50 @@
 package com.compasplus.mobicashpaymenttest.data
 
 class SearchManager() {
-    val regexSplitter : Regex = Regex("""[\s,!?.]+""")
-
-//    fun findText(query : String, faqMap: FaqMap) : FaqMap {
-//        val queryWords = query.split(regexSplitter)
-//        val newFaqMap = faqMap.copy()
-//        val result = newFaqMap.items.filter { entry ->
-//            val list = entry.value.forEach {
-//
-//            }
-//        }
-//
-//    }
+    val regexSplitter : Regex = Regex("""[\s,!?.]+""") // Splitter by words. Determines start of word
 
     fun findText(query : String, faqMap: FaqMap) : FaqMap {
         val queryWords = query.split(regexSplitter)
-        val newFaqMap = faqMap.copy()
-        val result = newFaqMap.items.filter { entry ->
-            val list = entry.value.filter { item ->
-                var isExist = false
+        val newMap = mutableMapOf<String?, List<FaqDataItem>>()
+        faqMap.items.forEach { mapItem ->
+            val newList = mutableListOf<FaqDataItem>()
+            mapItem.value.forEach { listItem ->
+                val questionMatches = mutableListOf<HighlightedTextRange>()
+                val answerMatches = mutableListOf<HighlightedTextRange>()
                 queryWords.forEach { word ->
-                    val regexWord = Regex(
-                        word,
-                        setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE)
-                    )
-                    val questionMatches = regexWord.findAll(item.question).toList()
-                    val answerMatches = regexWord.findAll(item.answer).toList()
-                    isExist = questionMatches.isNotEmpty() || answerMatches.isNotEmpty()
-                    item.question = addHighlight(questionMatches, item.question)
-                    item.answer = addHighlight(questionMatches, item.answer)
+                    if (word.length >= 2) {
+                        // Regular Expression for search a current word
+                        val regexWord = Regex(
+                            word,
+                            setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE)
+                        )
+
+                        fun getMatchResults(text: String): List<HighlightedTextRange> {
+                            val matches = regexWord.findAll(text).map {
+                                with(it.range) {
+                                    HighlightedTextRange(first, last + 1)
+                                }
+                            }
+                            return matches.toList()
+                        }
+
+                        questionMatches.addAll(getMatchResults(listItem.question.text))
+                        answerMatches.addAll(getMatchResults(listItem.answer.text))
+                    }
                 }
-                return@filter isExist
+
+                if (questionMatches.isNotEmpty() || answerMatches.isNotEmpty()) {
+                    newList.add(FaqDataItem(
+                        listItem.code,
+                        listItem.subject,
+                        HighlightedString(listItem.question.text, questionMatches),
+                        HighlightedString(listItem.answer.text, answerMatches)
+                    ))
+                }
             }
-//            return@filter false
-            return@filter list.isNotEmpty()
+            if (newList.isNotEmpty())
+                newMap[mapItem.key] = newList.toList()
         }
-        return FaqMap(result)
+        return FaqMap(newMap.toMap())
     }
 }

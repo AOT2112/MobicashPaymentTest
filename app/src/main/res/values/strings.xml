@@ -4,4 +4,6 @@
     <string name="data_searching_not_found">No results found</string>
     <string name="faq_title">F.A.Q.</string>
     <string name="search">Search</string>
+    <string name="speech_input_error">Speech input is not available</string>
+    <string name="speech_prompt_display">Speak something</string>
 </resources>

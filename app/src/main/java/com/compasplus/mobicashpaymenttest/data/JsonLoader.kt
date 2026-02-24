@@ -1,7 +1,6 @@
 package com.compasplus.mobicashpaymenttest.data
 
 import android.content.Context
-import androidx.compose.ui.text.AnnotatedString
 import com.compasplus.mobicashpaymenttest.R
 import kotlinx.serialization.json.Json
 import java.io.BufferedReader
@@ -15,15 +14,12 @@ class JsonLoader(context : Context) {
     fun getFaqData (): FaqMap {
         var jsonText = readJsonFile()
         jsonText = jsonText.replace(oldAppName, newAppName, false)
-        val faqDataItems = Json.Default.decodeFromString<Array<FaqJsonItem>>(jsonText)
+        val faqDataItems = Json.decodeFromString<Array<FaqJsonItem>>(jsonText)
         return convertToFaqMap(faqDataItems)
-
-//        val faqData = faqDataItems.groupBy(keySelector = { it.Subject })
-//        return FaqMap(faqData)
     }
 
     private fun readJsonFile() : String {
-        val fileName : String = "FaqDictionary.json"
+        val fileName = "FaqDictionary.json"
         val reader = BufferedReader(
             InputStreamReader(
                 localContext.assets.open(fileName),
@@ -38,8 +34,8 @@ class JsonLoader(context : Context) {
             FaqDataItem(
                 code = it.Code,
                 subject = it.Subject,
-                question = AnnotatedString(it.Question),
-                answer = androidx.compose.ui.text.AnnotatedString(it.Answer)
+                question = HighlightedString(it.Question, emptyList()),
+                answer = HighlightedString(it.Answer, emptyList())
             )
         }
 

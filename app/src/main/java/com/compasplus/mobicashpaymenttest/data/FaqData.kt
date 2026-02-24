@@ -15,8 +15,8 @@ data class FaqJsonItem(
 data class FaqDataItem (
     val code : String,
     val subject : String?,
-    var question : AnnotatedString,
-    var answer : AnnotatedString
+    val question : HighlightedString,
+    val answer : HighlightedString
 )
 
 data class FaqMap(val items : Map<String?, List<FaqDataItem>>)
